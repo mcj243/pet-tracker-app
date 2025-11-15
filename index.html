@@ -4,9 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Pawsitive Pet Tracker</title>
-<link href="https://cdn.jsdelivrlwindcss@3.4.1/dist/tailwind.min.css
-<link href="https://fonts.googleapis.com/css2?family100..900&display=swap
-<script src="https://unpkg.com/@phosph2.0.3</script>
+https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css
+https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap
+<script src="https://unpkg.com/@phosphor0.3</script>
 <style>
   body { font-family: 'Inter', sans-serif; transition: background-color 0.4s, color 0.4s; }
   .glass-card { backdrop-filter: blur(12px); background: rgba(255,255,255,0.15); border-radius: 1rem; transition: transform 0.3s ease, box-shadow 0.3s ease; }
@@ -138,7 +138,7 @@ const addHealthEntry=()=>{const d=document.getElementById('health-date').value,t
 const removeHealthEntry=id=>{healthLog=healthLog.filter(i=>i.id!=id);saveData();refreshUI();toast('Health log removed')};
 const renderHealthLog=()=>{const tb=document.getElementById('health-table-body');tb.innerHTML='';healthLog.forEach(i=>{tb.innerHTML+=`<tr><td>${formatDate(i.date)}</td><td>${i.type}</td><td>${formatDate(i.nextDue)}</td><td>${i.notes}</td><td><button onclick="removeHealthEntry(${i.id})" class="text-purple-500">✖</button></td></tr>`})};
 const updateDashboard=()=>{document.getElementById('total-spend-display').textContent=formatCurrency(expenses.reduce((s,i)=>s+parseFloat(i.cost),0));const catMap={};expenses.forEach(i=>catMap[i.category]=(catMap[i.category]||0)+parseFloat(i.cost));document.getElementById('top-category-display').textContent=Object.entries(catMap).sort(([,a],[,b])=>b-a)[0]?.[0]||'No Data';let next={days:Infinity,type:'N/A',date:'N/A'};healthLog.forEach(i=>{if(i.nextDue!=='N/A'){const diff=(new Date(i.nextDue)-new Date())/(1000*60*60*24);if(diff>=0&&diff<next.days)next={days:diff,type:i.type,date:i.nextDue}}});document.getElementById('next-appointment-display').textContent=next.type;document.getElementById('next-appointment-date').textContent=next.date!=='N/A'?formatDate(next.date):'Check your Health Log.'};
-document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));document.getElementById(b.dataset.tab).classList.add('active');document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active')});
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));document.getElementById(b.dataset.tab).classList.add('active');document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active')}));
 const themeBtn=document.getElementById('theme-toggle');const applyTheme=(t)=>{document.body.className=t==='dark'?'bg-gray-900 text-white':'bg-pink-50 text-gray-900';themeBtn.innerHTML=t==='dark'?'<i class="ph-sun"></i>':'<i class="ph-moon"></i>';localStorage.setItem('theme',t)};themeBtn.addEventListener('click',()=>applyTheme(localStorage.getItem('theme')==='dark'?'light':'dark'));applyTheme(localStorage.getItem('theme')||'light');
 window.onload=()=>{loadData();refreshUI()};
 </script>
