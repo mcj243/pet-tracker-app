@@ -1,36 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pawsitive Pet Tracker</title>
 
-  <!-- ✅ Tailwind CSS -->
- .net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Tailwind CSS (CDN) -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-  <!-- ✅ Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display- ✅ Phosphor Icons -->
-  https://unpkg.com/phosphor-icons</script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/phosphor-icons"></script>
 
   <style>
+    :root{
+      --glass-bg: rgba(255,255,255,0.12);
+      --glass-border: rgba(255,255,255,0.18);
+    }
+    html,body { height: 100%; }
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       transition: background-color 0.4s, color 0.4s;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
     .glass-card {
-      backdrop-filter: blur(12px);
-     : rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
       border-radius: 1rem;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
     .glass-card:hover {
       transform: translateY(-6px) scale(1.02);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.18);
     }
     .tab-content {
       opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.4s ease, transform 0.4s ease;
+      transform: translateY(6px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
       display: none;
     }
     .tab-content.active {
@@ -39,34 +50,52 @@
       display: block;
     }
     .theme-toggle:hover {
-      transform: rotate(180deg);
+      transform: rotate(20deg);
+      transition: transform 0.35s ease;
     }
     .icon-animate:hover {
-      animation: wiggle 0.6s ease-in-out infinite;
+      animation: wiggle 0.6s ease-in-out;
     }
     @keyframes wiggle {
       0%,100% { transform: rotate(0deg); }
-      25% { transform: rotate(10deg); }
-      75% { transform: rotate(-10deg); }
+      25% { transform: rotate(8deg); }
+      75% { transform: rotate(-8deg); }
     }
     .toast {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background: #ff69b4;
+      background: #ff4da6;
       color: #fff;
       padding: 12px 16px;
       border-radius: 8px;
       opacity: 0;
       transform: translateY(20px);
-      transition: opacity 0.3s ease, transform 0.3s ease;
+      transition: opacity 0.25s ease, transform 0.25s ease;
       z-index: 9999;
-      font-weight: bold;
+      font-weight: 600;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
     }
     .toast.show {
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* Dark mode helpers (simple) */
+    body.dark {
+      background-color: #0f172a; /* slate-900 */
+      color: #e6eef8;
+    }
+    body.dark .glass-card {
+      --glass-bg: rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.06);
+    }
+
+    /* Small table tweaks */
+    table thead th { font-weight: 700; padding: 8px 6px; }
+    table tbody td { padding: 8px 6px; border-top: 1px solid rgba(0,0,0,0.04); }
+    .muted { color: rgba(0,0,0,0.6); }
+    body.dark .muted { color: rgba(255,255,255,0.6); }
   </style>
 </head>
 <body class="bg-pink-50 text-gray-900">
@@ -78,7 +107,7 @@
       </h1>
       <div class="flex items-center space-x-4">
         <span id="user-info" class="text-sm bg-white/20 px-3 py-1 rounded-lg">Status: Ready</span>
-        <button id="theme-toggle" type="button" class="theme-toggle text-2xl"><i class="ph-sun"></i></button>
+        <button id="theme-toggle" type="button" class="theme-toggle text-2xl" aria-label="Toggle theme"><i id="theme-icon" class="ph-sun"></i></button>
       </div>
     </header>
 
@@ -105,7 +134,7 @@
             <i class="ph-calendar-check text-4xl text-cyan-400 icon-animate"></i>
             <h3 class="mt-2 font-semibold">Next Health Event</h3>
             <p id="next-appointment-display" class="text-xl font-bold mt-2">N/A</p>
-            <p id="next-appointment-date" class="text-sm">Check your Health Log.</p>
+            <p id="next-appointment-date" class="text-sm muted">Check your Health Log.</p>
           </div>
           <div class="glass-card p-5 text-center">
             <i class="ph-chart-line text-4xl text-pink-400 icon-animate"></i>
@@ -131,9 +160,9 @@
               <option>Insurance</option>
               <option>Other</option>
             </select>
-            <input type="number" id="expense-cost" class="p-2 rounded-lg bg-white" placeholder="Cost (£)" />
+            <input type="number" step="0.01" id="expense-cost" class="p-2 rounded-lg bg-white" placeholder="Cost (£)" />
             <input type="text" id="expense-description" class="p-2 rounded-lg bg-white" placeholder="Description" />
-            <button onclick="addExpense()" type="button" class="bg-pink-500 hover:bg-pink-600 text-white rounded-lg">Add</button>
+            <button id="add-expense-btn" type="button" class="bg-pink-500 hover:bg-pink-600 text-white rounded-lg">Add</button>
           </div>
         </div>
         <table class="w-full text-left">
@@ -159,7 +188,7 @@
             </select>
             <input type="date" id="health-next-due" class="p-2 rounded-lg bg-white" />
             <input type="text" id="health-notes" class="p-2 rounded-lg bg-white" placeholder="Notes" />
-            <button onclick="addHealthEntry()" type="button" class="bg-purple-500 hover:bg-purple-600 text-white rounded-lg">Add</button>
+            <button id="add-health-btn" type="button" class="bg-purple-500 hover:bg-purple-600 text-white rounded-lg">Add</button>
           </div>
         </div>
         <table class="w-full text-left">
@@ -171,17 +200,235 @@
       <!-- Guide -->
       <div id="guide" class="tab-content">
         <h2 class="text-2xl font-bold mb-4">Quick Guide</h2>
-        <p class="text-gray-700">Use tabs to navigate. Data is stored locally in your browser.</p>
+        <p class="text-gray-700">Use the tabs to navigate. Data is stored locally in your browser (localStorage). You can add, view, and remove expense & health entries. Try switching to dark mode with the theme button.</p>
       </div>
     </main>
   </div>
 
   <!-- Toast -->
-  <div id="toast" class="toast"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <!-- ✅ JavaScript -->
+  <!-- JavaScript -->
   <script>
-    // (Keep your original JS logic here – it’s mostly fine)
+    (function () {
+      // --- Simple state + persistence ---
+      const LS_KEYS = { EXP: 'pt_expenses_v1', HEALTH: 'pt_health_v1', THEME: 'pt_theme_v1' };
+      let expenses = JSON.parse(localStorage.getItem(LS_KEYS.EXP) || '[]');
+      let healthEntries = JSON.parse(localStorage.getItem(LS_KEYS.HEALTH) || '[]');
+
+      // --- Elements ---
+      const tabs = document.querySelectorAll('nav [data-tab]');
+      const contents = document.querySelectorAll('.tab-content');
+      const expenseTable = document.getElementById('expense-table-body');
+      const healthTable = document.getElementById('health-table-body');
+      const totalSpendDisplay = document.getElementById('total-spend-display');
+      const topCategoryDisplay = document.getElementById('top-category-display');
+      const nextAppointmentDisplay = document.getElementById('next-appointment-display');
+      const nextAppointmentDate = document.getElementById('next-appointment-date');
+      const toastEl = document.getElementById('toast');
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeIcon = document.getElementById('theme-icon');
+
+      // --- Utilities ---
+      function formatGBP(n) {
+        return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(Number(n) || 0);
+      }
+      function save() {
+        localStorage.setItem(LS_KEYS.EXP, JSON.stringify(expenses));
+        localStorage.setItem(LS_KEYS.HEALTH, JSON.stringify(healthEntries));
+      }
+      function showToast(msg, ms = 2200) {
+        toastEl.textContent = msg;
+        toastEl.classList.add('show');
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => toastEl.classList.remove('show'), ms);
+      }
+
+      // --- Tabs ---
+      tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabs.forEach(b => b.classList.remove('font-extrabold'));
+          btn.classList.add('font-extrabold');
+          const target = btn.getAttribute('data-tab');
+          contents.forEach(c => c.classList.toggle('active', c.id === target));
+        });
+      });
+
+      // --- Expenses ---
+      function renderExpenses() {
+        expenseTable.innerHTML = '';
+        if (!expenses.length) {
+          expenseTable.innerHTML = '<tr><td class="muted" colspan="5">No expenses recorded</td></tr>';
+        } else {
+          expenses.slice().reverse().forEach((e, idx) => {
+            const r = document.createElement('tr');
+            const date = e.date || '';
+            r.innerHTML = `
+              <td>${date}</td>
+              <td>${e.category || ''}</td>
+              <td>${e.description || ''}</td>
+              <td class="font-semibold">${formatGBP(e.cost)}</td>
+              <td><button data-i="${idx}" class="text-red-500 hover:underline remove-expense">Remove</button></td>
+            `;
+            expenseTable.appendChild(r);
+          });
+        }
+        updateDashboard();
+      }
+
+      function addExpenseFromForm() {
+        const date = document.getElementById('expense-date').value;
+        const category = document.getElementById('expense-category').value;
+        const costRaw = document.getElementById('expense-cost').value;
+        const description = document.getElementById('expense-description').value;
+        const cost = parseFloat(costRaw);
+        if (!date || !category || isNaN(cost)) {
+          showToast('Please provide date, category and valid cost');
+          return;
+        }
+        expenses.push({ date, category, cost: Number(cost.toFixed(2)), description, id: Date.now() });
+        save();
+        renderExpenses();
+        // clear inputs
+        document.getElementById('expense-date').value = '';
+        document.getElementById('expense-category').value = '';
+        document.getElementById('expense-cost').value = '';
+        document.getElementById('expense-description').value = '';
+        showToast('Expense added');
+      }
+
+      expenseTable.addEventListener('click', (ev) => {
+        if (ev.target.matches('.remove-expense')) {
+          const idx = Number(ev.target.dataset.i);
+          // remove from end-sorted list -> map index
+          const realIndex = expenses.length - 1 - idx;
+          if (realIndex >= 0) {
+            expenses.splice(realIndex, 1);
+            save();
+            renderExpenses();
+            showToast('Expense removed');
+          }
+        }
+      });
+
+      // --- Health ---
+      function renderHealth() {
+        healthTable.innerHTML = '';
+        if (!healthEntries.length) {
+          healthTable.innerHTML = '<tr><td class="muted" colspan="5">No health entries</td></tr>';
+        } else {
+          healthEntries.slice().reverse().forEach((h, idx) => {
+            const r = document.createElement('tr');
+            r.innerHTML = `
+              <td>${h.date || ''}</td>
+              <td>${h.type || ''}</td>
+              <td>${h.nextDue || ''}</td>
+              <td>${h.notes || ''}</td>
+              <td><button data-i="${idx}" class="text-red-500 hover:underline remove-health">Remove</button></td>
+            `;
+            healthTable.appendChild(r);
+          });
+        }
+        updateDashboard();
+      }
+
+      function addHealthFromForm() {
+        const date = document.getElementById('health-date').value;
+        const type = document.getElementById('health-type').value;
+        const nextDue = document.getElementById('health-next-due').value;
+        const notes = document.getElementById('health-notes').value;
+        if (!date || !type) {
+          showToast('Please provide date and type');
+          return;
+        }
+        healthEntries.push({ date, type, nextDue: nextDue || '', notes, id: Date.now() });
+        save();
+        renderHealth();
+        // clear
+        document.getElementById('health-date').value = '';
+        document.getElementById('health-type').value = '';
+        document.getElementById('health-next-due').value = '';
+        document.getElementById('health-notes').value = '';
+        showToast('Health entry added');
+      }
+
+      healthTable.addEventListener('click', (ev) => {
+        if (ev.target.matches('.remove-health')) {
+          const idx = Number(ev.target.dataset.i);
+          const realIndex = healthEntries.length - 1 - idx;
+          if (realIndex >= 0) {
+            healthEntries.splice(realIndex, 1);
+            save();
+            renderHealth();
+            showToast('Health entry removed');
+          }
+        }
+      });
+
+      // --- Dashboard calculations ---
+      function updateDashboard() {
+        // total spend (year-to-date)
+        const total = expenses.reduce((s, e) => s + Number(e.cost || 0), 0);
+        totalSpendDisplay.textContent = formatGBP(total);
+
+        // top category
+        const byCat = expenses.reduce((acc, e) => { acc[e.category] = (acc[e.category] || 0) + Number(e.cost || 0); return acc; }, {});
+        const top = Object.keys(byCat).sort((a,b) => (byCat[b]||0)-(byCat[a]||0))[0] || '---';
+        topCategoryDisplay.textContent = top;
+
+        // next appointment (nearest future nextDue)
+        const now = new Date();
+        const future = healthEntries
+          .map(h => ({...h, _d: h.nextDue ? new Date(h.nextDue) : null}))
+          .filter(h => h._d && !isNaN(h._d))
+          .filter(h => h._d >= new Date(now.getFullYear(), now.getMonth(), now.getDate()))
+          .sort((a,b) => a._d - b._d);
+
+        if (future.length) {
+          const next = future[0];
+          nextAppointmentDisplay.textContent = next.type || 'Upcoming';
+          nextAppointmentDate.textContent = new Date(next.nextDue).toLocaleDateString();
+        } else {
+          nextAppointmentDisplay.textContent = 'N/A';
+          nextAppointmentDate.textContent = 'Check your Health Log.';
+        }
+      }
+
+      // --- Theme toggle ---
+      function applyThemeFromStorage() {
+        const t = localStorage.getItem(LS_KEYS.THEME) || 'light';
+        if (t === 'dark') {
+          document.body.classList.add('dark');
+          themeIcon.className = 'ph-moon';
+        } else {
+          document.body.classList.remove('dark');
+          themeIcon.className = 'ph-sun';
+        }
+      }
+      themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark');
+        const isDark = document.body.classList.contains('dark');
+        localStorage.setItem(LS_KEYS.THEME, isDark ? 'dark' : 'light');
+        themeIcon.className = isDark ? 'ph-moon' : 'ph-sun';
+      });
+
+      // --- Wire up buttons ---
+      document.getElementById('add-expense-btn').addEventListener('click', addExpenseFromForm);
+      document.getElementById('add-health-btn').addEventListener('click', addHealthFromForm);
+
+      // --- Init render ---
+      applyThemeFromStorage();
+      renderExpenses();
+      renderHealth();
+      updateDashboard();
+
+      // Accessibility: switch to Dashboard on load
+      document.querySelector('nav [data-tab="dashboard"]').classList.add('font-extrabold');
+
+      // Expose minimal helpers to global (for debugging in console, optional)
+      window.pt = { expenses, healthEntries, save };
+
+    })();
   </script>
 </body>
 </html>
